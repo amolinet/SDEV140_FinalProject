@@ -106,16 +106,20 @@ class Main_Window_Class (tkinter.Toplevel):
         tree_scroll.config(command=tree_view.yview) #lets you scroll through the table
         load_data()
 
+# function to call the main_window (the book entry page)
 def create_window():
     global main_window
     main_window = Main_Window_Class()
-    
+
+# function to end the book entry window    
 def close_window():
     main_window.destroy()
 
+# function to end the program
 def close_hello_window():
     hello_window.destroy()
 
+# function to load data from an excel sheet into the main window
 def load_data():
     path = "D:\programming projects - Copy\my_venv\anm_BookInventory.xlsx"
     workbook= openpyxl.load_workbook(path)
@@ -126,13 +130,16 @@ def load_data():
     for col_name in list_values[0]:
         tree_view.heading(col_name, text=col)
 
+# opens the landing page of the program
 hello_window = tkinter.Tk()
 hello_window.title("LittleLibro Landing Page")
 hello_window.geometry("300x200")
 
+# opens the book entry window
 entry_button = ttk.Button(hello_window, text = "Click here to enter a new book.", command = create_window)
 entry_button.pack(expand = True)
 
+# closes the landing page/whole program
 exit_button = ttk.Button(hello_window, text = "Click here to end application.", command = close_hello_window)
 exit_button.pack(expand = True)
 
