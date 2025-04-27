@@ -1,15 +1,45 @@
 # m08 - Final Project - LittleLibro Personal Library Tracker
 # auther:  ANM
 # created 2025-04-09
-# updated 2025-04-26
+# updated 2025-04-27
 # IDE used: Visual Studio Code
+# CODING ASSISTANCE WAS USED to create this program
+    # Code Assistance Website - https://www.youtube.com/watch?v=8m4uDS_nyCk aided in pulling data entry and adding to an excel file
+    # Code Assistance Website - https://www.youtube.com/watch?v=unZlSLhzNOU aided in creation of main_window_class and using it as a function for a button
+    # Code Assistance Website - https://www.youtube.com/watch?v=vusUfPBsggw aided in creation of main window (LittleLibro Book Entry Form)
 
+
+
+# pseudo code
+# at least 2 windows
+# use at least two images
+# include at least three labels
+# include at least 3 buttons
+# include at least three call back functions (one per button including an exit button)
+# use input validation to ensure correct data type and no empty boxes (where applicable)
 
 # imports tkinter modules
 import tkinter
 from tkinter import ttk
-import openpyxl
 
+# is used to open/create an excel file that holds data.
+import openpyxl 
+
+
+# function to call the main_window (the book entry page)
+def create_window():
+    global main_window
+    main_window = Main_Window_Class() # sets the variable to the main_window_class which in turn creates the new window when a button is pushed
+
+# function to end the book entry window    
+def close_window():
+    main_window.destroy()
+
+# function to end the program
+def close_hello_window():
+    hello_window.destroy()
+
+# made a class for the entry form window so that it could be used in a function as a variable. This allows the user to click a button and have a separate window open for the entry form.
 class Main_Window_Class (tkinter.Toplevel):
     def __init__(self):
         super().__init__()
@@ -75,7 +105,7 @@ class Main_Window_Class (tkinter.Toplevel):
         review_textbox.grid(row=1, column=3, columnspan=2)
 
         # insert entry into table button
-        insert_button = ttk.Button(book_info_frame, text = "Add Book")
+        insert_button = ttk.Button(book_info_frame, text = "Add Book", command=insert_book)
         insert_button.grid(row = 3, column= 3)
 
         exit_button = ttk.Button(book_info_frame, text = "Click here to close book entry page.", command = close_window)
@@ -84,51 +114,20 @@ class Main_Window_Class (tkinter.Toplevel):
         # for loop that spaces out the widgets evenly
         for widget in book_info_frame.winfo_children():
             widget.grid_configure(padx = 10, pady = 5)
+    
+        # inserts entry into table
+        def insert_book(): # STILL WORKING ON THIS; GOAL IS TO MAKE THIS FUNCTION THE COMMAND FOR THE INSERT_BUTTON
+            # retrieve entry data
+            first_name = first_name_entry.get()
+            last_name = last_name_entry.get()
+            book_title = book_title_entry.get()
+            genre = genre_entry.get()
+            media_type = media_type_combobox.get()
+            book_shelf = book_list_combobox.get()
+            rating = rating_combobox.get()
+            review = review_textbox.get()
 
-        # creates a frame where you can see the tabel in the corresponding excel page
-        treeFrame = ttk.Frame(frame)
-        treeFrame.grid(row = 1, column = 0, padx=10, pady=10)
-        tree_scroll = ttk.Scrollbar(treeFrame)
-        tree_scroll.pack(side='right', fill='y')
-
-
-        cols = ('Author\'s First Name', 'Author\'s Last Name', 'Book Title', 'Media Type', 'Genre', 'Book Shelf', 'Rating')
-        tree_view = ttk.Treeview(treeFrame, show='headings', 
-                                 yscrollcommand=tree_scroll.set, columns=cols, height=10)
-        tree_view.column("Author\'s First Name", width=100)
-        tree_view.column("Author\'s Last Name", width=100)
-        tree_view.column("Book Title", width=100)
-        tree_view.column("Media Type", width=50)
-        tree_view.column("Genre", width=50)
-        tree_view.column("Book Shelf", width=50)
-        tree_view.column("Rating", width=50)
-        tree_view.pack()
-        tree_scroll.config(command=tree_view.yview) #lets you scroll through the table
-        load_data()
-
-# function to call the main_window (the book entry page)
-def create_window():
-    global main_window
-    main_window = Main_Window_Class()
-
-# function to end the book entry window    
-def close_window():
-    main_window.destroy()
-
-# function to end the program
-def close_hello_window():
-    hello_window.destroy()
-
-# function to load data from an excel sheet into the main window
-def load_data():
-    path = "D:\programming projects - Copy\my_venv\anm_BookInventory.xlsx"
-    workbook= openpyxl.load_workbook(path)
-    sheet = workbook.active
-
-    list_values = list(sheet.values)
-    print(list_values)
-    for col_name in list_values[0]:
-        tree_view.heading(col_name, text=col)
+            # insert into excel sheet
 
 # opens the landing page of the program
 hello_window = tkinter.Tk()
