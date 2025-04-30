@@ -16,14 +16,11 @@
 # include at least three call back functions (one per button including an exit button)
 # use input validation to ensure correct data type and no empty boxes (where applicable)
 
-# imports tkinter modules
+# imports classes and methods
 import tkinter
 from tkinter import ttk
-from tkinter import messagebox
-
-# is used to open/create a txt file that holds data
+from PIL import Image, ImageTk
 import os
-
 
 # function to call the main_window (the book entry page)
 def create_window():
@@ -45,13 +42,31 @@ class Main_Window_Class(tkinter.Toplevel):
         self.title('LittleLibro Book Entry Form')
         self.geometry('1225x625')
         self.create_main_frame()
+        self.create_picture_frame()
         self.create_book_info_frame()
         self.create_tree_view()
-        self.load_data_to_treeview()
 
     def create_main_frame(self):
         self.frame = tkinter.Frame(self, height=1025, bg="pink")
         self.frame.pack(fill=tkinter.X) #makes sure that the whole screen is filled
+
+    def create_picture_frame(self): # used GitHub Copilot to center image
+        picture_frame = tkinter.LabelFrame(master=self.frame, text="Pink icon of an open book", bg="pink")
+        picture_frame.grid(row=0, column=1, sticky="nsew")  # Allow the frame to expand and fill available space
+        
+        # Configure row and column weights for resizing
+        self.frame.grid_rowconfigure(0, weight=1)
+        self.frame.grid_columnconfigure(1, weight=1)
+
+        book_icon = Image.open('pink_book_icon.png').resize((200, 200))
+        self.book_icon_tk = ImageTk.PhotoImage(book_icon)  # Store as an instance attribute
+
+        book_icon_label = ttk.Label(picture_frame, text='Pink icon of an open book', image=self.book_icon_tk)
+        book_icon_label.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")  # Center the label
+
+        # Configure row and column weights for centering
+        picture_frame.grid_rowconfigure(0, weight=1)
+        picture_frame.grid_columnconfigure(0, weight=1)
 
         # creates a subframe titled "Entry Form"
     def create_book_info_frame(self):
@@ -181,7 +196,15 @@ class Main_Window_Class(tkinter.Toplevel):
 # opens the landing page of the program
 hello_window = tkinter.Tk()
 hello_window.title("LittleLibro Landing Page")
-hello_window.geometry("300x200")
+hello_window.geometry("300x300")
+
+bookshelf_image = Image.open('bookshelf.jpg').resize((300, 200))
+bookshelf_image_tk = ImageTk.PhotoImage(bookshelf_image)  # Store as an instance attribute
+
+bookshelf_image_label = ttk.Label(hello_window, image=bookshelf_image_tk)
+bookshelf_image_label_alt_text = ttk.Label(hello_window, text='Image of a bookshelf')
+bookshelf_image_label_alt_text.pack(padx=0, pady=0, expand=True)# centers text
+bookshelf_image_label.pack(padx=10, pady=10, expand=True)  # centers image
 
 # opens the book entry window
 entry_button = ttk.Button(hello_window, text = "Click here to enter a new book.", command = create_window)
