@@ -9,6 +9,7 @@
     # Code Assistance Website - https://www.youtube.com/watch?v=vusUfPBsggw aided in creation of main window (LittleLibro Book Entry Form)
     # Code Assistance AI - Used GitHub Copilot throughout code for help with debugging and organization
     # Code Assistance AI - Used GitHub Copilot to help with centering images and making them fill the frame, as well as creating the clear data button
+    # Code Assistance AI - Used GitHub Copilot to help with creating the book table window and the remove duplicates button
 
 
 # pseudo code
@@ -21,7 +22,7 @@
 
 # imports classes and methods
 import tkinter
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
 import os
 
@@ -50,13 +51,12 @@ class Main_Window_Class(tkinter.Toplevel):
         # Initialize the Toplevel window
         super().__init__()
         self.title('LittleLibro Book Entry Form')
-        self.geometry('1000x1425')
 
         # Create the main frame and subframes
         self.create_main_frame()
         self.create_picture_frame()
         self.create_book_info_frame()
-        self.create_button_frame()
+        self.create_button_frame(self)
 
     def create_main_frame(self):
         self.frame = tkinter.Frame(self, bg="antique white")
@@ -68,20 +68,30 @@ class Main_Window_Class(tkinter.Toplevel):
         self.button_frame.grid(row=0, column=1, sticky="nsew")  # Create a separate frame for buttons
 
     def create_picture_frame(self): # used GitHub Copilot to center image and make it fill the frame
-        picture_frame = tkinter.LabelFrame(master=self.frame, text="Image of bookshelves at the George Peabody Library in Baltimore, Maryland", bg="pink")
+        picture_frame = tkinter.LabelFrame(master=self.frame, bg="antique white")
         picture_frame.grid(row=0, column=2, sticky="nsew")  # Allow the frame to expand and fill available space
-
         try:
+            # Get the path to the library image
             modulePath = os.path.dirname(os.path.realpath(__file__))
-            libraryPath = os.path.join(modulePath, 'george_peabody_library.png')
-            library_image = Image.open(libraryPath).resize((300, 300))
-            
-            book_icon_label = tkinter.Label(picture_frame, image=library_image, bg="antique white")  # Create the label widget
-            book_icon_label.image = library_image  # Keep a reference to avoid garbage collection
-            book_icon_label.grid(row=0, column=0, sticky="nsew")  # Center the label and make it fill the frame
-        except Exception as e:
-            error_label = ttk.Label(picture_frame, text=f"Error loading image: {e}", background="antique white", foreground="red")
-            error_label.grid(row=0, column=0, sticky="nsew")  # Display error message
+            libraryPath = os.path.join(modulePath, 'george_peabody_library.jpg')
+
+            # Load and resize the image
+            library_image = Image.open(libraryPath)
+            library_image = library_image.resize((200, 200))
+            library_image = ImageTk.PhotoImage(library_image)
+
+            # Display the image in the picture_frame
+            library_image_label = ttk.Label(picture_frame, image=library_image, background="antique white")
+            library_image_label.image = library_image  # Keep a reference to avoid garbage collection
+            library_image_label.grid(row=0, column=0, padx=10, pady=10)  # Centers the image within the frame
+        except FileNotFoundError:
+            # Display an error message if the image is not found
+            error_label = ttk.Label(picture_frame, text="Error: george_peabody_library.jpg not found.", background="antique white", foreground="red")
+            error_label.grid(row=0, column=0, padx=10, pady=10)  # Centers the error message
+
+        # Add alt text below the image
+        library_image_label_alt_text = ttk.Label(picture_frame, text="Image of shelves from the George Peabody Library in Baltimore", background="antique white")
+        library_image_label_alt_text.grid(row=1, column=0, padx=0, pady=0)  # Centers the alt text
 
         # Configure row and column weights for centering and resizing
         picture_frame.grid_rowconfigure(0, weight=1)
@@ -121,7 +131,7 @@ class Main_Window_Class(tkinter.Toplevel):
         self.first_name_entry.grid(row=1, column=0)
         self.first_name_entry.insert(0, "Author's First Name") # fills entry box with a default "Author's First Name", makes clear to user what the widget expects as input. 
         self.first_name_entry.bind("<FocusIn>", lambda e: self.first_name_entry.delete("0", "end")) # clears the box when the user clicks on it.
-        self.first_name_entry.bind("<FocusIn>", lambda _: self.first_name_entry.delete("0", "end")) # clears the box when the user clicks on it.
+        self.first_name_entry.bind("<FocusIn>", lambda e: self.first_name_entry.delete("0", "end")) # clears the box when the user clicks on it.
         self.last_name_entry = tkinter.Entry(frame)
         self.last_name_entry.insert(0, "Author's Last Name") # fills entry box with a default "Author's Last Name", makes clear to user what the widget expects as input.
         self.last_name_entry.bind("<FocusIn>", lambda e: self.last_name_entry.delete("0", "end"))
@@ -168,20 +178,24 @@ class Main_Window_Class(tkinter.Toplevel):
         
         # creates a separate frame for buttons and adds buttons to it
     def create_buttons(self, frame):
-            insert_file_button = ttk.Button(self.button_frame, text="Add Book to .txt file", command=self.add_book_to_file)  # insert is used for adding book to a text file
-            insert_file_button.grid(row=3, column=0, padx=5)
-    
-            clear_button = ttk.Button(self.button_frame, text="Clear Entry Boxes", command=lambda: [self.first_name_entry.delete(0, 'end'), self.last_name_entry.delete(0, 'end'),
-                                                       self.book_title_entry.delete(0, 'end'), self.genre_entry.delete(0, 'end')])  # clears the entry boxes when clicked
-            clear_button.grid(row=3, column=1, padx=5)
+        button_width = 20  # Set a fixed width for all buttons
 
-            clear_combo_button = ttk.Button(self.button_frame, text="Clear Combo Boxes", command=lambda: [self.media_type_combobox.set(''), self.book_list_combobox.set(''), self.rating_combobox.set('')])  # clears the combo boxes when clicked
-            clear_combo_button.grid(row=4, column=1, padx=5)
-    
+        insert_file_button = ttk.Button(self.button_frame, text="Add Book to .txt file", width=button_width, command=self.add_book_to_file)
+        insert_file_button.grid(row=3, column=0, padx=5)
 
-    
-            exit_button = ttk.Button(self.button_frame, text="Click here to close book entry page.", command=close_window)  # closes the entry form window but not the program
-            exit_button.grid(row=5, column=1, padx=5)
+        clear_button = ttk.Button(self.button_frame, text="Clear Entry Boxes", width=button_width, command=lambda: [
+            self.first_name_entry.delete(0, 'end'), self.last_name_entry.delete(0, 'end'),
+            self.book_title_entry.delete(0, 'end'), self.genre_entry.delete(0, 'end')
+        ])
+        clear_button.grid(row=3, column=1, padx=5)
+
+        clear_combo_button = ttk.Button(self.button_frame, text="Clear Combo Boxes", width=button_width, command=lambda: [
+            self.media_type_combobox.set(''), self.book_list_combobox.set(''), self.rating_combobox.set('')
+        ])
+        clear_combo_button.grid(row=4, column=1, padx=5)
+
+        exit_button = ttk.Button(self.button_frame, text="Close book entry page.", width=button_width, command=self.destroy)
+        exit_button.grid(row=5, column=1, padx=5)
 
     # Function to save book details to a text file
     def add_book_to_file(self):
@@ -222,11 +236,19 @@ class BookTable(tkinter.Toplevel):
         # Define column headings
         for col in columns:
             self.tree.heading(col, text=col)
-            self.tree.column(col, width=100, anchor="center")
+            self.tree.column(col, anchor="center")  # Allow auto-resizing
 
         # Load data from the text file
         self.add_books_to_table(columns)
 
+        # Adjust column widths to fit content
+        self.auto_fit_columns()
+
+        # Add a button to remove duplicate data
+        remove_duplicates_button = ttk.Button(self, text="Remove Duplicates", command=self.remove_duplicates)
+        remove_duplicates_button.pack(pady=10)
+
+    # Adds the books to the table from the text file. It only adds the last 10 entries to the table so that it doesn't get too long and cluttered.
     def add_books_to_table(self, columns):
         try:
             with open("anm_LittleLibroInventory.txt", "r") as file:
@@ -240,46 +262,76 @@ class BookTable(tkinter.Toplevel):
         except Exception as e:
             tkinter.messagebox.showerror("Error", f"An error occurred: {e}")
 
+    # Automatically adjust column widths to fit content
+    def auto_fit_columns(self):
+        for col in self.tree["columns"]:
+            max_width = max(
+                len(str(self.tree.set(item, col))) for item in self.tree.get_children("")
+            )
+            max_width = max(max_width, len(col))  # Account for column header length
+            self.tree.column(col, width=max_width * 10)  # Adjust width multiplier as needed
+
+    # Remove duplicate entries from the text file and refresh the table
+    def remove_duplicates(self):
+        try:
+            with open("anm_LittleLibroInventory.txt", "r") as file:
+                lines = file.readlines()
+
+            # Remove duplicates while preserving order
+            unique_lines = list(dict.fromkeys(lines))
+
+            with open("anm_LittleLibroInventory.txt", "w") as file:
+                file.writelines(unique_lines)
+
+            # Refresh the table
+            for item in self.tree.get_children():
+                self.tree.delete(item)
+            self.add_books_to_table(self.tree["columns"])
+
+            tkinter.messagebox.showinfo("Success", "Duplicates removed successfully!")
+        except FileNotFoundError:
+            tkinter.messagebox.showerror("Error", "Inventory file not found!")
+        except Exception as e:
+            tkinter.messagebox.showerror("Error", f"An error occurred: {e}")
+
 # opens the landing page of the program
 hello_window = tkinter.Tk()
 hello_window.title("LittleLibro by ANM")
-hello_window.geometry("300x300")
 hello_window.configure(bg="antique white")
 
-# Get the current working directory
-current_dir = os.getcwd()
-
 try:
+    # Get the path to the bookshelf image
     modulePath = os.path.dirname(os.path.realpath(__file__))
     bookshelfPath = os.path.join(modulePath, 'bookshelf.jpg')
 
-        bookshelf_image = Image.open(bookshelfPath)
-        bookshelf_image = bookshelf_image.resize((200, 200), Image.ANTIALIAS)
-        bookshelf_image = ImageTk.PhotoImage(bookshelf_image)
-        bookshelf_image = tkinter.PhotoImage(file=bookshelfPath)
+    # Load and resize the image
+    bookshelf_image = Image.open(bookshelfPath)
+    bookshelf_image = bookshelf_image.resize((200, 200))
+    bookshelf_image = ImageTk.PhotoImage(bookshelf_image)
 
-        bookshelf_image_label = ttk.Label(hello_window, image=bookshelf_image, background="antique white")
-        bookshelf_image_label.image = bookshelf_image  # Keep a reference to avoid garbage collection
-        bookshelf_image_label.pack(padx=10, pady=10, expand=True)  # Centers the image
-    else:
-        raise FileNotFoundError("bookshelf.jpg not found in the current directory.")
-except Exception as e:
-    error_label = ttk.Label(hello_window, text=f"Error loading image: {e}", background="antique white", foreground="red")
+    # Display the image in the hello_window
+    bookshelf_image_label = ttk.Label(hello_window, image=bookshelf_image, background="antique white")
+    bookshelf_image_label.image = bookshelf_image  # Keep a reference to avoid garbage collection
+    bookshelf_image_label.pack(padx=10, pady=10, expand=True)  # Centers the image
+except FileNotFoundError:
+    # Display an error message if the image is not found
+    error_label = ttk.Label(hello_window, text="Error: bookshelf.jpg not found.", background="antique white", foreground="red")
     error_label.pack(padx=10, pady=10, expand=True)  # Centers the error message
 
-bookshelf_image_label_alt_text = ttk.Label(hello_window, text='Image of a bookshelf', background="antique white")
-bookshelf_image_label_alt_text.pack(padx=0, pady=0, expand=True)  # centers text
+# Add alt text below the image
+bookshelf_image_label_alt_text = ttk.Label(hello_window, text="Image of a bookshelf", background="antique white")
+bookshelf_image_label_alt_text.pack(padx=0, pady=0, expand=True)  # Centers the alt text
 
 # opens the book entry window
-entry_button = ttk.Button(hello_window, text="Click here to enter a new book.", command=create_window)
+entry_button = ttk.Button(hello_window, text="Enter a new book.", command=create_window)
 entry_button.pack(expand=True)
 
 # opens the book table window
-book_table_button = ttk.Button(hello_window, text="Click here to view book table.", command=create_book_table)
+book_table_button = ttk.Button(hello_window, text="View Book Table.", command=create_book_table)
 book_table_button.pack(expand=True)
 
 # closes the landing page/whole program
-exit_button = ttk.Button(hello_window, text="Click here to end application.", command=close_hello_window)
+exit_button = ttk.Button(hello_window, text="End application.", command=close_hello_window)
 exit_button.pack(expand=True)
 
 # needed for opening the window
