@@ -2,3 +2,7 @@ Sharon,Creech,Walk Two Moons,Historical Fiction,eBook,To-Read
 J.K,Rowling,Harry Potter,Fantasy,Audiobook,Read
 Robert,Ludlam,The Scarlotti Inheritance,Fantasy,eBook,Read,3 stars
 Stephen,King,The Wind Through the Keyhole,Fantasy,Audiobook,Reading,
+Max,Porter,Shy,Thriller,eBook,Read,3 stars
+J.K.,Rowling,Harry Potter and the Sorcerer's Stone,Children's Fantasy,Physical Copy,Did Not Finish,1 star
+Rebecca,Yarros,Fourth Wing,Romance/Fantasy,Audiobook,Read,2 stars
+Stephen,Graham Porter,Night of the Mannequins,Thriller,Physical Copy,Reading,
