@@ -1,6 +1,11 @@
+m08 - Final Project - User Manual
+author: anm
+date created 2025-04-30
+date updated 2025-05-10
+
 >>> The purpose of this GUI application is to store your personal library in a text file. You should be able to enter the author's first and last name, the book title, and the genre. From the dropdown boxes you can assign the book to a "book-shelf", assign a media type and assign a rating.
 
->>> This program uses Tkinter, pillow and os. If you do not have tkinter installed, in the terminal type: pip install Tkinter do the same to install pillow. Os does not need to be installed as it is already included. 
+>>> Everything needed to run the program is included in the zip file, if you open the whole folder in your IDE you shouldn't need to install anything. However, this program uses Tkinter, pillow and os. If you need to install tkinter, in the terminal type: pip install Tkinter do the same to install pillow. Os does not need to be installed as it is already included.
 
 >>> To use this application run it in your IDE. 
         1. A window should open titled "LittleLibro by ANM"
